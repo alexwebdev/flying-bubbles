@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>	
+<head>
+	<meta charset="utf-8" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<title>Flying Bubbles</title>
+	<style type="text/css">
+		* { 
+			margin: 0; 
+		}
+		body {
+		  overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+
+	<canvas id="canvasEl" width="600" height="400">Your browser does not support HTML5.</canvas>
+	
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$(window).resize(function() { adjust(); });
+			
+			
+			var canvas;
+			var context;
+			var speed = 1;
+			var RADIUS = 30;
+			var AMOUNT = 20;
+			var bubbles;
+
+			init();
+			
+
+			function init() {
+				adjust();
+				
+				canvas = document.getElementById("canvasEl");
+				context = canvas.getContext("2d");
+
+				createBubbles();
+				setInterval(move, 15);
+			}
+
+			
+			function adjust() {
+				var w = document.body.clientWidth;
+				var h = window.innerHeight;
+  			$('#canvasEl').attr('width',w).attr('height',h);
+			}
+
+			
+			function createBubbles() {
+
+				bubbles = new Array();
+				
+				for (var i=0; i<AMOUNT; i++) {
+					
+					var posX = RADIUS + Math.random() * (context.canvas.width - RADIUS*2);
+					var posY = RADIUS + Math.random() * (context.canvas.height - RADIUS*2); 
+	
+					var dirX = (Math.random() - Math.random()) * speed;
+					var dirY = (Math.random() - Math.random()) * speed; 
+
+					var r = Math.floor(Math.random() * 255);
+					var g = Math.floor(Math.random() * 255);
+					var b = Math.floor(Math.random() * 255);
+					var color = 'rgba(' + r + ',' + g + ',' + b + ',0.8)';
+	
+					var bubble = {
+							posX: posX,
+							posY: posY,
+							dirX: dirX,
+							dirY: dirY,
+							color: color
+					};
+
+					bubbles.push(bubble);
+					
+				}
+			}
+			
+
+			function move() {
+				
+				clearBoard();
+
+				for (var i=0; i<bubbles.length; i++) {
+					if (bubbles[i].posX >= context.canvas.width - RADIUS || bubbles[i].posX <= RADIUS) bubbles[i].dirX *= -1;
+					if (bubbles[i].posY >= context.canvas.height - RADIUS || bubbles[i].posY <= RADIUS) bubbles[i].dirY *= -1;
+					
+					bubbles[i].posX += bubbles[i].dirX * speed;
+					bubbles[i].posY += bubbles[i].dirY * speed;
+					
+					context.beginPath();
+					context.fillStyle = bubbles[i].color;
+					context.moveTo(bubbles[i].posX, bubbles[i].posY);
+					context.arc(bubbles[i].posX, bubbles[i].posY,RADIUS,0,Math.PI*2);
+					context.closePath();
+					context.fill();
+				}
+			}
+
+
+			function clearBoard() {
+				context.fillStyle="black";
+				context.fillRect(0,0,context.canvas.width,context.canvas.height);
+			}
+
+		});			
+	</script>
+</body>
+</html>
